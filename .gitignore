@@ -1,0 +1,6 @@
+dev.yml
+prod.yml
+logs/*.log
+.scannerwork
+sonar-project.properties
+.vscode
