@@ -67,6 +67,41 @@ paths:
                         type: string
                       refresh_token:
                         type: string
+  /refresh-token:
+    post:
+      summary: Refreshing JWT access token
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Successful refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                      refresh_token:
+                        type: string
   /logout:
     post:
       summary: Logout and delete FCM token
