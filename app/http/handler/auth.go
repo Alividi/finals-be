@@ -43,3 +43,26 @@ func (a *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	helper.WriteResponse(r.Context(), w, err, response)
 }
+
+func (a *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
+	payload := dto.RefreshTokenRequest{}
+	err := helper.ReadRequest(r, &payload)
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, err, nil)
+		return
+	}
+
+	err = a.validate.Struct(payload)
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, helper.NewErrBadRequest(err.Error()), nil)
+		return
+	}
+
+	response, err := a.authService.RefreshToken(r.Context(), payload)
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, err, nil)
+		return
+	}
+
+	helper.WriteResponse(r.Context(), w, nil, response)
+}

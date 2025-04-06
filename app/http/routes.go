@@ -12,15 +12,17 @@ func RegisterRoutes(ctx context.Context, s *Server, cfg *config.Config) *mux.Rou
 	router := mux.NewRouter()
 	middleware := NewMiddleware(*cfg)
 
+	privateAPI := router.PathPrefix("").Subrouter()
+	privateAPI.Use(middleware.Authorization)
+
 	authHandler := handler.NewAuthHandler(s.authService, s.validate)
 
-	router.Use(middleware.Authorization)
-
-	RegisterAuthRoutes(router, authHandler)
+	RegisterAuthRoutes(router, privateAPI, authHandler)
 
 	return router
 }
 
-func RegisterAuthRoutes(api *mux.Router, h *handler.AuthHandler) {
-	api.HandleFunc("/login", h.Login).Methods("POST") // handler
+func RegisterAuthRoutes(publicAPI *mux.Router, privateAPI *mux.Router, h *handler.AuthHandler) {
+	publicAPI.HandleFunc("/login", h.Login).Methods("POST")
+	publicAPI.HandleFunc("/refresh-token", h.RefreshToken).Methods("POST")
 }

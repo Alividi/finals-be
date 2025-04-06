@@ -13,6 +13,7 @@ import (
 type IUserRepository interface {
 	GetByUsername(ctx context.Context, username string) (usr *model.User, err error)
 	StoreRefreshToken(ctx context.Context, username string, refreshToken string) error
+	GetByRefreshToken(ctx context.Context, refreshToken string) (usr *model.User, err error)
 }
 
 type UserRepository struct {
@@ -67,4 +68,31 @@ func (r *UserRepository) StoreRefreshToken(ctx context.Context, username string,
 	}
 
 	return nil
+}
+
+func (r *UserRepository) GetByRefreshToken(ctx context.Context, refreshToken string) (usr *model.User, err error) {
+	usr = &model.User{}
+
+	query := fmt.Sprintf(`
+		SELECT
+			id, 
+			username, 
+			role, 
+			refresh_token
+		FROM %s
+		WHERE refresh_token = $1
+	`, constants.TABLE_USERS)
+
+	err = r.db.
+		QueryRow(ctx, query, refreshToken).
+		Scan(&usr.ID, &usr.Username, &usr.Role, &usr.RefreshToken)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, helper.NewErrNotFound("User not found")
+		}
+		return nil, err
+	}
+
+	return
 }
