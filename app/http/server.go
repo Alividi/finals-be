@@ -2,29 +2,40 @@ package http
 
 import (
 	"context"
+	authService "finals-be/app/auth/service"
 	"finals-be/internal/config"
+	"finals-be/internal/connection"
 	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/cors"
 	"github.com/rs/zerolog/log"
 )
 
 type Server struct {
 	opts ServerOption
+
+	authService *authService.AuthService
+
+	validate *validator.Validate
 }
 
 type ServerOption struct {
 	Config *config.Config
+	DB     *connection.SQLServerConnectionManager
 }
 
 func NewServerOption(opts ServerOption) Server {
 	s := Server{
 		opts: opts,
 	}
+
+	s.validate = validator.New()
+	s.authService = authService.NewAuthService(opts.Config, opts.DB)
 
 	return s
 }
