@@ -54,7 +54,7 @@ func (a *AuthService) Login(ctx context.Context, request dto.LoginRequest) (resp
 		return
 	}
 
-	if err = a.userRepository.StoreRefreshToken(ctx, user.Username, refreshToken); err != nil {
+	if err = a.userRepository.StoreRefreshToken(ctx, user.Username, &refreshToken); err != nil {
 		log.Default().Println("Failed to store refresh token")
 		return
 	}
@@ -96,7 +96,7 @@ func (a *AuthService) RefreshToken(ctx context.Context, request dto.RefreshToken
 		return
 	}
 
-	if err = a.userRepository.StoreRefreshToken(ctx, user.Username, refreshToken); err != nil {
+	if err = a.userRepository.StoreRefreshToken(ctx, user.Username, &refreshToken); err != nil {
 		log.Default().Println("Failed to store refresh token")
 		return
 	}
@@ -107,4 +107,15 @@ func (a *AuthService) RefreshToken(ctx context.Context, request dto.RefreshToken
 	}
 
 	return response, err
+}
+
+func (a *AuthService) Logout(ctx context.Context, request dto.LogoutRequest) error {
+
+	user := auth.GetUserContext(ctx)
+
+	a.userRepository.StoreRefreshToken(ctx, user.Username, nil)
+
+	// TODO: implement remove FcmToken
+
+	return nil
 }

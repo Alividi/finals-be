@@ -25,4 +25,6 @@ func RegisterRoutes(ctx context.Context, s *Server, cfg *config.Config) *mux.Rou
 func RegisterAuthRoutes(publicAPI *mux.Router, privateAPI *mux.Router, h *handler.AuthHandler) {
 	publicAPI.HandleFunc("/login", h.Login).Methods("POST")
 	publicAPI.HandleFunc("/refresh-token", h.RefreshToken).Methods("POST")
+
+	privateAPI.HandleFunc("/logout", h.Logout).Methods("POST")
 }

@@ -12,7 +12,7 @@ import (
 
 type IUserRepository interface {
 	GetByUsername(ctx context.Context, username string) (usr *model.User, err error)
-	StoreRefreshToken(ctx context.Context, username string, refreshToken string) error
+	StoreRefreshToken(ctx context.Context, username string, refreshToken *string) error
 	GetByRefreshToken(ctx context.Context, refreshToken string) (usr *model.User, err error)
 }
 
@@ -55,7 +55,7 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (us
 	return
 }
 
-func (r *UserRepository) StoreRefreshToken(ctx context.Context, username string, refreshToken string) error {
+func (r *UserRepository) StoreRefreshToken(ctx context.Context, username string, refreshToken *string) error {
 	query := fmt.Sprintf(`
 		UPDATE %s 
 			SET refresh_token = $1

@@ -14,3 +14,7 @@ type LoginResponse struct {
 type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
+
+type LogoutRequest struct {
+	FCMToken string `json:"fcm_token" validate:"required"`
+}

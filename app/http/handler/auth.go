@@ -66,3 +66,26 @@ func (a *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	helper.WriteResponse(r.Context(), w, nil, response)
 }
+
+func (a *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
+	payload := dto.LogoutRequest{}
+	err := helper.ReadRequest(r, &payload)
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, err, nil)
+		return
+	}
+
+	err = a.validate.Struct(payload)
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, helper.NewErrBadRequest(err.Error()), nil)
+		return
+	}
+
+	err = a.authService.Logout(r.Context(), payload)
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, err, nil)
+		return
+	}
+
+	helper.WriteResponse(r.Context(), w, nil, nil)
+}
