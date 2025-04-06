@@ -9,11 +9,9 @@ type GetCurrentUserResponse struct {
 }
 
 type User struct {
-	ID          int64  `json:"user_id"`
-	Username    string `json:"username"`
-	Email       string `json:"email"`
-	PhoneNumber int64  `json:"phone"`
-	RoleID      *int64 `json:"role_id"`
+	ID       string `json:"user_id"`
+	Username string `json:"username"`
+	Role     string `json:"role_id"`
 }
 
 type AuthClaims struct {
