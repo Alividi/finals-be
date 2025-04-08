@@ -16,8 +16,10 @@ func RegisterRoutes(ctx context.Context, s *Server, cfg *config.Config) *mux.Rou
 	privateAPI.Use(middleware.Authorization)
 
 	authHandler := handler.NewAuthHandler(s.authService, s.validate)
+	userHandler := handler.NewUserHandler(s.userService, s.validate)
 
 	RegisterAuthRoutes(router, privateAPI, authHandler)
+	RegisterUserRoutes(router, privateAPI, userHandler)
 
 	return router
 }
@@ -27,4 +29,8 @@ func RegisterAuthRoutes(publicAPI *mux.Router, privateAPI *mux.Router, h *handle
 	publicAPI.HandleFunc("/refresh-token", h.RefreshToken).Methods("POST")
 
 	privateAPI.HandleFunc("/logout", h.Logout).Methods("POST")
+}
+
+func RegisterUserRoutes(publicAPI *mux.Router, privateAPI *mux.Router, h *handler.UserHandler) {
+	privateAPI.HandleFunc("/current-user", h.GetCurrentUser).Methods("GET")
 }

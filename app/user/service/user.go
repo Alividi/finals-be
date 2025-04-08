@@ -1,0 +1,44 @@
+package service
+
+import (
+	"context"
+	"finals-be/app/user/dto"
+	userRepo "finals-be/app/user/repository"
+	"finals-be/internal/config"
+	"finals-be/internal/connection"
+)
+
+type UserService struct {
+	cfg            *config.Config
+	db             *connection.MultiInstruction
+	userRepository userRepo.IUserRepository
+}
+
+func NewUserService(cfg *config.Config, conn *connection.SQLServerConnectionManager) *UserService {
+	db := conn.GetTransaction()
+	return &UserService{
+		cfg:            cfg,
+		db:             db,
+		userRepository: userRepo.NewUserRepository(db),
+	}
+}
+
+func (u *UserService) GetCurrentUser(ctx context.Context, userId string) (response dto.GetCurrentUserResponse, err error) {
+
+	user, err := u.userRepository.GetUserDetail(ctx, userId)
+	almt, _ := u.userRepository.GetAlamatUser(ctx, userId)
+
+	if err != nil {
+		return
+	}
+
+	response = dto.GetCurrentUserResponse{
+		Role:     user.Role,
+		Username: user.Username,
+		Phone:    user.NoTelp,
+		Email:    user.Email,
+		Address:  almt,
+	}
+
+	return response, nil
+}
