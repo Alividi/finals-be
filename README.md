@@ -1,6 +1,6 @@
 # finals-be
 
-Anjay
+Backend repository for my final project **Digisatlink**
 
 ## Migrations
 
@@ -11,4 +11,9 @@ Install the CLI : https://github.com/golang-migrate/migrate/blob/master/cmd/migr
 **Run script :**
 ```sql
 migrate -path migrations -database postgres://postgres:root@localhost:5432/finals_db?sslmode=disable up
+```
+
+**Run script for zsh terminal :**
+```sql
+migrate -path migrations -database "postgres://postgres:root@localhost:5432/finals_db?sslmode=disable" up
 ```

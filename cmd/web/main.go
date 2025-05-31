@@ -35,7 +35,7 @@ func main() {
 
 	db, err := connection.NewConnectionManager(cfg.DB)
 	if err != nil {
-		log.Fatal("Failed to connect to databases")
+		log.Fatalf("Failed to connect to databases: %v", err)
 	}
 
 	ctx := context.Background()

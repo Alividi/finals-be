@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	authService "finals-be/app/auth/service"
+	productService "finals-be/app/product/service"
 	userService "finals-be/app/user/service"
 	"finals-be/internal/config"
 	"finals-be/internal/connection"
@@ -20,8 +21,9 @@ import (
 type Server struct {
 	opts ServerOption
 
-	authService *authService.AuthService
-	userService *userService.UserService
+	authService    *authService.AuthService
+	userService    *userService.UserService
+	productService *productService.ProductService
 
 	validate *validator.Validate
 }
@@ -39,6 +41,7 @@ func NewServerOption(opts ServerOption) Server {
 	s.validate = validator.New()
 	s.authService = authService.NewAuthService(opts.Config, opts.DB)
 	s.userService = userService.NewUserService(opts.Config, opts.DB)
+	s.productService = productService.NewProductService(opts.Config, opts.DB)
 
 	return s
 }
