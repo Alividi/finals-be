@@ -17,6 +17,7 @@ type IUserRepository interface {
 	GetUserDetail(ctx context.Context, userId string) (usr *model.User, err error)
 	GetCustomerDetail(ctx context.Context, userId string) (usr *model.CustomerDetail, err error)
 	GetAlamatUser(ctx context.Context, userId string) (alamat *model.Alamat, err error)
+	GetTechnicians(ctx context.Context) ([]*model.Teknisi, error)
 }
 
 type UserRepository struct {
@@ -179,4 +180,30 @@ func (r *UserRepository) GetAlamatUser(ctx context.Context, userId string) (alam
 	}
 
 	return
+}
+
+func (r *UserRepository) GetTechnicians(ctx context.Context) (technicians []*model.Teknisi, err error) {
+	query := fmt.Sprintf(`
+		SELECT 
+			u.id, u.nama, u.email, u.no_telp, t.status, t.base 
+		FROM %s u
+		JOIN %s t ON u.id = t.user_id
+		WHERE u.role = 'teknisi'
+	`, constants.TABLE_USERS, constants.TABLE_TEKNISI)
+
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		tech := &model.Teknisi{}
+		err = rows.Scan(&tech.ID, &tech.Nama, &tech.Email, &tech.NoTelp, &tech.Status, &tech.Base)
+		if err != nil {
+			return nil, err
+		}
+		technicians = append(technicians, tech)
+	}
+
+	return technicians, nil
 }

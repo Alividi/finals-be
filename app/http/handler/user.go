@@ -32,3 +32,13 @@ func (u *UserHandler) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 
 	helper.WriteResponse(r.Context(), w, err, response)
 }
+
+func (u *UserHandler) GetTechnicians(w http.ResponseWriter, r *http.Request) {
+	response, err := u.userService.GetTechnicians(r.Context())
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, err, nil)
+		return
+	}
+
+	helper.WriteResponse(r.Context(), w, err, response)
+}

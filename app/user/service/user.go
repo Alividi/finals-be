@@ -42,3 +42,23 @@ func (u *UserService) GetCurrentUser(ctx context.Context, userId string) (respon
 
 	return response, nil
 }
+
+func (u *UserService) GetTechnicians(ctx context.Context) (response []dto.GetTechniciansResponse, err error) {
+	technicians, err := u.userRepository.GetTechnicians(ctx)
+	if err != nil {
+		return
+	}
+
+	for _, tech := range technicians {
+		response = append(response, dto.GetTechniciansResponse{
+			ID:     tech.ID,
+			Nama:   tech.Nama,
+			Email:  tech.Email,
+			NoTelp: tech.NoTelp,
+			Status: tech.Status,
+			Base:   tech.Base,
+		})
+	}
+
+	return response, nil
+}

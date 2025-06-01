@@ -1,7 +1,8 @@
 package constants
 
 const (
-	TABLE_USERS = "tbl_users"
+	TABLE_USERS   = "tbl_users"
+	TABLE_TEKNISI = "tbl_teknisi"
 
 	TABLE_PRODUK          = "tbl_produk"
 	TABLE_PERANGKAT       = "tbl_perangkat"

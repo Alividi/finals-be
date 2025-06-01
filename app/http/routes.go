@@ -35,6 +35,7 @@ func RegisterAuthRoutes(publicAPI *mux.Router, privateAPI *mux.Router, h *handle
 
 func RegisterUserRoutes(publicAPI *mux.Router, privateAPI *mux.Router, h *handler.UserHandler) {
 	privateAPI.HandleFunc("/current-user", h.GetCurrentUser).Methods("GET")
+	privateAPI.HandleFunc("/technicians", h.GetTechnicians).Methods("GET")
 }
 
 func RegisterProductRoutes(publicAPI *mux.Router, privateAPI *mux.Router, h *handler.ProductHandler) {
