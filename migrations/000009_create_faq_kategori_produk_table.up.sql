@@ -1,6 +1,6 @@
 CREATE TABLE tbl_faq_kategori_produk (
-    id VARCHAR(50) PRIMARY KEY,
-    kategori_produk_id VARCHAR(50),
+    id integer PRIMARY KEY,
+    kategori_produk_id integer,
     pertanyaan TEXT,
     jawaban TEXT,
     FOREIGN KEY (kategori_produk_id) REFERENCES tbl_kategori_produk(id)

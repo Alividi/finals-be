@@ -1,6 +1,6 @@
 create table tbl_teknisi (
-	id varchar(50) primary key,
-	user_id varchar(50),
+	id integer primary key,
+	user_id integer,
 	status varchar(50),
 	base varchar(50)
 );

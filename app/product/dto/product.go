@@ -1,8 +1,8 @@
 package dto
 
 type Perangkat struct {
-	ID              string `json:"id" db:"id"`
-	FkKategoriId    string `json:"kategori_produk_id" db:"kategori_produk_id"`
+	ID              int64  `json:"id" db:"id"`
+	FkKategoriId    int64  `json:"kategori_produk_id" db:"kategori_produk_id"`
 	NamaProduk      string `json:"nama_produk" db:"nama_produk"`
 	DeskripsiProduk string `json:"deskripsi_produk" db:"deskripsi_produk"`
 	HargaProduk     int    `json:"harga_produk" db:"harga_produk"`
@@ -15,7 +15,7 @@ type Layanan struct {
 }
 
 type GetProductDetailResponse struct {
-	ID          string      `json:"id" db:"id"`
+	ID          int64       `json:"id" db:"id"`
 	Nama        string      `json:"nama" db:"nama_produk"`
 	Spesifikasi string      `json:"spesifikasi" db:"spesifikasi_produk"`
 	Image       string      `json:"image" db:"gambar_produk"`
@@ -24,15 +24,15 @@ type GetProductDetailResponse struct {
 }
 
 type GetProductsResponse struct {
-	ID        string `json:"id" db:"id"`
+	ID        int64  `json:"id" db:"id"`
 	Nama      string `json:"nama" db:"nama_produk"`
 	Deskripsi string `json:"deskripsi" db:"deskripsi_produk"`
 	Image     string `json:"image" db:"gambar_produk"`
 }
 
 type GetFaqResponse struct {
-	ID                string `json:"id" db:"id"`
-	KategoriProductId string `json:"kategori_produk_id" db:"kategori_produk_id"`
+	ID                int64  `json:"id" db:"id"`
+	KategoriProductId int64  `json:"kategori_produk_id" db:"kategori_produk_id"`
 	Pertanyaan        string `json:"pertanyaan" db:"pertanyaan"`
 	Jawaban           string `json:"jawaban" db:"jawaban"`
 }

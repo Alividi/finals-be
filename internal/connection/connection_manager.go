@@ -67,6 +67,10 @@ func (cm *SQLServerConnectionManager) Close() error {
 	return cm.db.Close()
 }
 
+func (cm *SQLServerConnectionManager) GetQuery() *SingleInstruction {
+	return NewSingleInstruction(cm.db)
+}
+
 func (cm *SQLServerConnectionManager) GetTransaction() *MultiInstruction {
 	return NewMultiInstruction(cm.db)
 }

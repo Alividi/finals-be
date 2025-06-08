@@ -1,4 +1,4 @@
 CREATE TABLE tbl_kategori_produk (
-    id VARCHAR(50) PRIMARY KEY,
+    id integer PRIMARY KEY,
     nama_kategori_produk VARCHAR(50)
 );

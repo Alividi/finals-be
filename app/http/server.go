@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	authService "finals-be/app/auth/service"
+	notificationService "finals-be/app/notification/service"
 	productService "finals-be/app/product/service"
 	userService "finals-be/app/user/service"
 	"finals-be/internal/config"
@@ -21,9 +22,10 @@ import (
 type Server struct {
 	opts ServerOption
 
-	authService    *authService.AuthService
-	userService    *userService.UserService
-	productService *productService.ProductService
+	authService         *authService.AuthService
+	userService         *userService.UserService
+	productService      *productService.ProductService
+	notificationService *notificationService.NotificationService
 
 	validate *validator.Validate
 }
@@ -42,6 +44,7 @@ func NewServerOption(opts ServerOption) Server {
 	s.authService = authService.NewAuthService(opts.Config, opts.DB)
 	s.userService = userService.NewUserService(opts.Config, opts.DB)
 	s.productService = productService.NewProductService(opts.Config, opts.DB)
+	s.notificationService = notificationService.NewNotificationService(opts.Config, opts.DB)
 
 	return s
 }
@@ -92,7 +95,7 @@ func startHTTP(ctx context.Context, httpHandler http.Handler, cfg *config.Config
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Info().Msg("Server is shutting down")
+			log.Info().Msg("Server is shutting down : " + err.Error())
 		}
 	}()
 

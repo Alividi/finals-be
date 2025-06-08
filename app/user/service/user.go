@@ -23,7 +23,7 @@ func NewUserService(cfg *config.Config, conn *connection.SQLServerConnectionMana
 	}
 }
 
-func (u *UserService) GetCurrentUser(ctx context.Context, userId string) (response dto.GetCurrentUserResponse, err error) {
+func (u *UserService) GetCurrentUser(ctx context.Context, userId int64) (response dto.GetCurrentUserResponse, err error) {
 
 	user, err := u.userRepository.GetUserDetail(ctx, userId)
 	almt, _ := u.userRepository.GetAlamatUser(ctx, userId)
@@ -58,6 +58,19 @@ func (u *UserService) GetTechnicians(ctx context.Context) (response []dto.GetTec
 			Status: tech.Status,
 			Base:   tech.Base,
 		})
+	}
+
+	return response, nil
+}
+
+func (u *UserService) GetUserStatus(ctx context.Context, userId int64) (response dto.UserStatus, err error) {
+	status, err := u.userRepository.GetUserStatus(ctx, userId)
+	if err != nil {
+		return
+	}
+
+	response = dto.UserStatus{
+		NotificationCount: status.NotificationCount,
 	}
 
 	return response, nil

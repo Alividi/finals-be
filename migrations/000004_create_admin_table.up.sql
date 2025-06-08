@@ -1,6 +1,6 @@
 create table tbl_admin (
-	id varchar(50) primary key,
-	user_id varchar(50),
+	id integer primary key,
+	user_id integer,
 	nik varchar(50),
 	npwp varchar(50),
 	tgl_lahir timestamp

@@ -1,7 +1,7 @@
 package model
 
 type Teknisi struct {
-	ID     string `db:"id"`
+	ID     int64  `db:"id"`
 	Nama   string `db:"nama"`
 	Email  string `db:"email"`
 	NoTelp string `db:"no_telp"`

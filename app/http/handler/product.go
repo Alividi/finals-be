@@ -27,8 +27,9 @@ func (p *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *ProductHandler) GetProductById(w http.ResponseWriter, r *http.Request) {
-	productId := helper.GetURLParamString(r, "id")
-	if productId == "" {
+	productId := helper.GetURLParamInt64(r, "id")
+
+	if productId == 0 {
 		helper.WriteResponse(r.Context(), w, helper.NewErrBadRequest("Product ID is required"), nil)
 		return
 	}
@@ -43,8 +44,8 @@ func (p *ProductHandler) GetProductById(w http.ResponseWriter, r *http.Request) 
 }
 
 func (p *ProductHandler) GetFAQById(w http.ResponseWriter, r *http.Request) {
-	faqId := helper.GetURLParamString(r, "id")
-	if faqId == "" {
+	faqId := helper.GetURLParamInt64(r, "id")
+	if faqId == 0 {
 		helper.WriteResponse(r.Context(), w, helper.NewErrBadRequest("FAQ ID is required"), nil)
 		return
 	}

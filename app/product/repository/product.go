@@ -12,10 +12,10 @@ import (
 
 type IProductRepository interface {
 	GetProducts(ctx context.Context) (products []model.Product, err error)
-	GetLayananByProductId(ctx context.Context, productId string) (layanan []model.Layanan, err error)
-	GetPerangkatByProductId(ctx context.Context, productId string) (perangkat []model.Perangkat, err error)
-	GetProductById(ctx context.Context, id string) (product model.Product, err error)
-	GetFaqByKategoriId(ctx context.Context, id string) (faq []model.FAQ, err error)
+	GetLayananByProductId(ctx context.Context, productId int64) (layanan []model.Layanan, err error)
+	GetPerangkatByProductId(ctx context.Context, productId int64) (perangkat []model.Perangkat, err error)
+	GetProductById(ctx context.Context, id int64) (product model.Product, err error)
+	GetFaqByKategoriId(ctx context.Context, id int64) (faq []model.FAQ, err error)
 }
 
 type ProductRepository struct {
@@ -50,7 +50,7 @@ func (r *ProductRepository) GetProducts(ctx context.Context) (products []model.P
 	return products, nil
 }
 
-func (r *ProductRepository) GetPerangkatByProductId(ctx context.Context, productId string) (perangkat []model.Perangkat, err error) {
+func (r *ProductRepository) GetPerangkatByProductId(ctx context.Context, productId int64) (perangkat []model.Perangkat, err error) {
 	query := fmt.Sprintf(
 		`SELECT 
 			id,
@@ -75,7 +75,7 @@ func (r *ProductRepository) GetPerangkatByProductId(ctx context.Context, product
 	return perangkat, nil
 }
 
-func (r *ProductRepository) GetLayananByProductId(ctx context.Context, productId string) (layanan []model.Layanan, err error) {
+func (r *ProductRepository) GetLayananByProductId(ctx context.Context, productId int64) (layanan []model.Layanan, err error) {
 	query := fmt.Sprintf(
 		`SELECT 
 			id, 
@@ -97,7 +97,7 @@ func (r *ProductRepository) GetLayananByProductId(ctx context.Context, productId
 	return layanan, nil
 }
 
-func (r *ProductRepository) GetProductById(ctx context.Context, productId string) (product model.Product, err error) {
+func (r *ProductRepository) GetProductById(ctx context.Context, productId int64) (product model.Product, err error) {
 	query := fmt.Sprintf(
 		`SELECT 
 			id, 
@@ -120,7 +120,7 @@ func (r *ProductRepository) GetProductById(ctx context.Context, productId string
 	return product, nil
 }
 
-func (r *ProductRepository) GetFaqByKategoriId(ctx context.Context, id string) (faq []model.FAQ, err error) {
+func (r *ProductRepository) GetFaqByKategoriId(ctx context.Context, id int64) (faq []model.FAQ, err error) {
 	query := fmt.Sprintf(
 		`SELECT 
 			id, 

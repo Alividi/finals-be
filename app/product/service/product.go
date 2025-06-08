@@ -42,7 +42,7 @@ func (p *ProductService) GetProducts(ctx context.Context) (response []dto.GetPro
 	return response, nil
 }
 
-func (p *ProductService) GetProductById(ctx context.Context, productId string) (response dto.GetProductDetailResponse, err error) {
+func (p *ProductService) GetProductById(ctx context.Context, productId int64) (response dto.GetProductDetailResponse, err error) {
 	product, err := p.productRepository.GetProductById(ctx, productId)
 	if err != nil {
 		return dto.GetProductDetailResponse{}, err
@@ -90,7 +90,7 @@ func (p *ProductService) GetProductById(ctx context.Context, productId string) (
 	return response, nil
 }
 
-func (p *ProductService) GetFaqByKategoriId(ctx context.Context, kategoriId string) (response []dto.GetFaqResponse, err error) {
+func (p *ProductService) GetFaqByKategoriId(ctx context.Context, kategoriId int64) (response []dto.GetFaqResponse, err error) {
 	faqs, err := p.productRepository.GetFaqByKategoriId(ctx, kategoriId)
 	if err != nil {
 		return nil, err

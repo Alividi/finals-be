@@ -162,3 +162,77 @@ func (t *MultiInstruction) NamedExec(ctx context.Context, query string, arg inte
 func (t *MultiInstruction) NamedExecTxx(ctx context.Context, query string, arg interface{}) (sql.Result, error) {
 	return t.tx.NamedExecContext(ctx, query, arg)
 }
+
+type SingleInstruction struct {
+	db *sqlx.DB
+}
+
+func NewSingleInstruction(db *sqlx.DB) *SingleInstruction {
+	return &SingleInstruction{
+		db: db,
+	}
+}
+
+func (s *SingleInstruction) Query(ctx context.Context, query string, args ...interface{}) (*sqlx.Rows, error) {
+	return s.db.QueryxContext(ctx, query, args...)
+}
+
+func (s *SingleInstruction) QueryTxx(ctx context.Context, query string, args ...interface{}) (*sqlx.Rows, error) {
+	return s.db.QueryxContext(ctx, query, args...)
+}
+
+func (s *SingleInstruction) QueryRow(ctx context.Context, query string, args ...interface{}) *sqlx.Row {
+	return s.db.QueryRowxContext(ctx, query, args...)
+}
+
+func (s *SingleInstruction) QueryRowTxx(ctx context.Context, query string, args ...interface{}) *sqlx.Row {
+	return s.db.QueryRowxContext(ctx, query, args...)
+}
+
+func (s *SingleInstruction) Exec(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+	return s.db.ExecContext(ctx, query, args...)
+}
+
+func (s *SingleInstruction) ExecTxx(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+	return s.db.ExecContext(ctx, query, args...)
+}
+
+func (s *SingleInstruction) Prepare(ctx context.Context, query string) (*sqlx.Stmt, error) {
+	return s.db.PreparexContext(ctx, query)
+}
+
+func (s *SingleInstruction) PrepareTxx(ctx context.Context, query string) (*sqlx.Stmt, error) {
+	return s.db.PreparexContext(ctx, query)
+}
+
+func (s *SingleInstruction) Select(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+	return s.db.SelectContext(ctx, dest, query, args...)
+}
+
+func (s *SingleInstruction) SelectTxx(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+	return s.db.SelectContext(ctx, dest, query, args...)
+}
+
+func (s *SingleInstruction) Get(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+	return s.db.GetContext(ctx, dest, query, args...)
+}
+
+func (s *SingleInstruction) GetTxx(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+	return s.db.GetContext(ctx, dest, query, args...)
+}
+
+func (s *SingleInstruction) Rebind(query string) string {
+	return s.db.Rebind(query)
+}
+
+func (s *SingleInstruction) RebindTxx(query string) string {
+	return s.db.Rebind(query)
+}
+
+func (s *SingleInstruction) NamedExec(ctx context.Context, query string, arg interface{}) (sql.Result, error) {
+	return s.db.NamedExecContext(ctx, query, arg)
+}
+
+func (s *SingleInstruction) NamedExecTxx(ctx context.Context, query string, arg interface{}) (sql.Result, error) {
+	return s.db.NamedExecContext(ctx, query, arg)
+}

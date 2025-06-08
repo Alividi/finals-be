@@ -42,3 +42,15 @@ func (u *UserHandler) GetTechnicians(w http.ResponseWriter, r *http.Request) {
 
 	helper.WriteResponse(r.Context(), w, err, response)
 }
+
+func (u *UserHandler) GetUserStatus(w http.ResponseWriter, r *http.Request) {
+	user := auth.GetUserContext(r.Context())
+
+	response, err := u.userService.GetUserStatus(r.Context(), user.ID)
+	if err != nil {
+		helper.WriteResponse(r.Context(), w, err, nil)
+		return
+	}
+
+	helper.WriteResponse(r.Context(), w, err, response)
+}

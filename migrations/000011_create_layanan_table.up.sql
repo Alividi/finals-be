@@ -1,6 +1,6 @@
 CREATE TABLE tbl_layanan (
-    id VARCHAR(50) PRIMARY KEY,
-    produk_id VARCHAR(50),
+    id integer PRIMARY KEY,
+    produk_id integer,
     nama_layanan VARCHAR(100),
     harga_layanan INTEGER,
     FOREIGN KEY (produk_id) REFERENCES tbl_produk(id)

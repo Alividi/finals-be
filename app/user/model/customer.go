@@ -1,8 +1,8 @@
 package model
 
 type Customer struct {
-	CustomerID       string `db:"id"`
-	FkUserId         string `db:"user_id"`
+	CustomerID       int64  `db:"id"`
+	FkUserId         int64  `db:"user_id"`
 	NamaPerusahaan   string `db:"nama_perusahaan"`
 	EmailPerusahaan  string `db:"email_perusahaan"`
 	NoTelpPerusahaan string `db:"no_telp_perusahaan"`
@@ -10,8 +10,8 @@ type Customer struct {
 }
 
 type Alamat struct {
-	AlamatID     string  `db:"id"`
-	FkCustomerID string  `db:"customer_id"`
+	AlamatID     int64   `db:"id"`
+	FkCustomerID int64   `db:"customer_id"`
 	Provinsi     string  `db:"provinsi"`
 	Kabupaten    string  `db:"kabupaten"`
 	Kecamatan    string  `db:"kecamatan"`

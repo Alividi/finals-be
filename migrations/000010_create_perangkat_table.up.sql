@@ -1,7 +1,7 @@
 CREATE TABLE tbl_perangkat (
-    id VARCHAR(50) PRIMARY KEY,
-    produk_id VARCHAR(50),
-    kategori_produk_id VARCHAR(50),
+    id integer PRIMARY KEY,
+    produk_id integer,
+    kategori_produk_id integer,
     nama_produk VARCHAR(100),
     deskripsi_produk TEXT,
     harga_produk INTEGER,

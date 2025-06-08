@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"finals-be/app/user/dto"
 	"finals-be/app/user/model"
 	"finals-be/internal/connection"
 	"finals-be/internal/constants"
@@ -14,10 +15,11 @@ type IUserRepository interface {
 	GetByUsername(ctx context.Context, username string) (usr *model.User, err error)
 	StoreRefreshToken(ctx context.Context, username string, refreshToken *string) error
 	GetByRefreshToken(ctx context.Context, refreshToken string) (usr *model.User, err error)
-	GetUserDetail(ctx context.Context, userId string) (usr *model.User, err error)
-	GetCustomerDetail(ctx context.Context, userId string) (usr *model.CustomerDetail, err error)
-	GetAlamatUser(ctx context.Context, userId string) (alamat *model.Alamat, err error)
+	GetUserDetail(ctx context.Context, userId int64) (usr *model.User, err error)
+	GetCustomerDetail(ctx context.Context, userId int64) (usr *model.CustomerDetail, err error)
+	GetAlamatUser(ctx context.Context, userId int64) (alamat *model.Alamat, err error)
 	GetTechnicians(ctx context.Context) ([]*model.Teknisi, error)
+	GetUserStatus(ctx context.Context, userId int64) (*dto.UserStatus, error)
 }
 
 type UserRepository struct {
@@ -101,7 +103,7 @@ func (r *UserRepository) GetByRefreshToken(ctx context.Context, refreshToken str
 	return
 }
 
-func (r *UserRepository) GetCustomerDetail(ctx context.Context, userId string) (usr *model.CustomerDetail, err error) {
+func (r *UserRepository) GetCustomerDetail(ctx context.Context, userId int64) (usr *model.CustomerDetail, err error) {
 	usr = &model.CustomerDetail{}
 
 	query := fmt.Sprintf(`
@@ -133,7 +135,7 @@ func (r *UserRepository) GetCustomerDetail(ctx context.Context, userId string) (
 	return
 }
 
-func (r *UserRepository) GetUserDetail(ctx context.Context, userId string) (usr *model.User, err error) {
+func (r *UserRepository) GetUserDetail(ctx context.Context, userId int64) (usr *model.User, err error) {
 	usr = &model.User{}
 
 	query := fmt.Sprintf(`
@@ -157,7 +159,7 @@ func (r *UserRepository) GetUserDetail(ctx context.Context, userId string) (usr 
 	return
 }
 
-func (r *UserRepository) GetAlamatUser(ctx context.Context, userId string) (alamat *model.Alamat, err error) {
+func (r *UserRepository) GetAlamatUser(ctx context.Context, userId int64) (alamat *model.Alamat, err error) {
 	alamat = &model.Alamat{}
 
 	query := `
@@ -206,4 +208,23 @@ func (r *UserRepository) GetTechnicians(ctx context.Context) (technicians []*mod
 	}
 
 	return technicians, nil
+}
+
+func (r *UserRepository) GetUserStatus(ctx context.Context, userId int64) (*dto.UserStatus, error) {
+	query := fmt.Sprintf(`
+		SELECT 
+			COUNT(*) AS notification_count 
+		FROM %s 
+		WHERE user_id = $1 AND is_read = false
+	`, constants.TABLE_NOTIFIKASI)
+
+	var notificationCount int
+	err := r.db.QueryRow(ctx, query, userId).Scan(&notificationCount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.UserStatus{
+		NotificationCount: notificationCount,
+	}, nil
 }

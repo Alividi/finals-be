@@ -4,6 +4,9 @@ const (
 	TABLE_USERS   = "tbl_users"
 	TABLE_TEKNISI = "tbl_teknisi"
 
+	TABLE_NOTIFIKASI = "tbl_notifikasi"
+	TABLE_TOKEN      = "tbl_token"
+
 	TABLE_PRODUK          = "tbl_produk"
 	TABLE_PERANGKAT       = "tbl_perangkat"
 	TABLE_LAYANAN         = "tbl_layanan"

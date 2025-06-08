@@ -1,8 +1,8 @@
 package model
 
 type Product struct {
-	ID                 string `db:"id"`
-	FkKategoriProdukId string `db:"kategori_produk_id"`
+	ID                 int64  `db:"id"`
+	FkKategoriProdukId int64  `db:"kategori_produk_id"`
 	NamaProduk         string `db:"nama_produk"`
 	DeskripsiProduk    string `db:"deskripsi_produk"`
 	GambarProduk       string `db:"gambar_produk"`
@@ -10,6 +10,6 @@ type Product struct {
 }
 
 type KategoriProduk struct {
-	ID                 string `db:"id"`
+	ID                 int64  `db:"id"`
 	NamaKetegoriProduk string `db:"nama_kategori_produk"`
 }

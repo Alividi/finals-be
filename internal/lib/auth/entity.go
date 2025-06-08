@@ -9,7 +9,7 @@ type GetCurrentUserResponse struct {
 }
 
 type User struct {
-	ID       string `json:"user_id"`
+	ID       int64  `json:"user_id"`
 	Username string `json:"username"`
 	Role     string `json:"role_id"`
 }
@@ -22,7 +22,7 @@ type AuthClaims struct {
 }
 
 type AuthUser struct {
-	UserID   string `json:"user_id"`
+	UserID   int64  `json:"user_id"`
 	Username string `json:"username"`
 	Role     string `json:"role"`
 }

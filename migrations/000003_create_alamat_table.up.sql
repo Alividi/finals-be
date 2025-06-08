@@ -1,6 +1,6 @@
 create table tbl_alamat (
-	id varchar(50) primary key,
-	customer_id varchar(50),
+	id integer primary key,
+	customer_id integer,
 	provinsi varchar(50),
 	kabupaten varchar(50),
 	kecamatan varchar(50),

@@ -11,10 +11,14 @@ type GetCurrentUserResponse struct {
 }
 
 type GetTechniciansResponse struct {
-	ID     string `json:"id"`
+	ID     int64  `json:"id"`
 	Nama   string `json:"nama"`
 	Email  string `json:"email"`
 	NoTelp string `json:"no_telp"`
 	Status string `json:"status"`
 	Base   string `json:"base"`
+}
+
+type UserStatus struct {
+	NotificationCount int `json:"notification_count"`
 }

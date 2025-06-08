@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func NewAuthClaims(ID string, username string, role string, issuer string, expiration time.Time) *AuthClaims {
+func NewAuthClaims(ID int64, username string, role string, issuer string, expiration time.Time) *AuthClaims {
 	return &AuthClaims{
 		User: &AuthUser{
 			UserID:   ID,
