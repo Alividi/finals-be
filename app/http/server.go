@@ -7,7 +7,7 @@ import (
 	productService "finals-be/app/product/service"
 	userService "finals-be/app/user/service"
 	"finals-be/internal/config"
-	"finals-be/internal/connection"
+	"finals-be/internal/util"
 	"fmt"
 	"net/http"
 	"os"
@@ -20,7 +20,8 @@ import (
 )
 
 type Server struct {
-	opts ServerOption
+	opts    ServerOption
+	clients *util.Clients
 
 	authService         *authService.AuthService
 	userService         *userService.UserService
@@ -31,20 +32,25 @@ type Server struct {
 }
 
 type ServerOption struct {
-	Config *config.Config
-	DB     *connection.SQLServerConnectionManager
+	Clients *util.Clients
+	Config  *config.Config
 }
 
 func NewServerOption(opts ServerOption) Server {
 	s := Server{
-		opts: opts,
+		opts:    opts,
+		clients: opts.Clients,
 	}
 
 	s.validate = validator.New()
-	s.authService = authService.NewAuthService(opts.Config, opts.DB)
-	s.userService = userService.NewUserService(opts.Config, opts.DB)
-	s.productService = productService.NewProductService(opts.Config, opts.DB)
-	s.notificationService = notificationService.NewNotificationService(opts.Config, opts.DB)
+
+	//firebaseService := notificationService.NewFirebaseService(opts.Config, opts.Clients.DB, opts.Clients.Message)
+	//s3Service := shared.NewS3Service(opts.Config, opts.Clients.S3Client)
+
+	s.authService = authService.NewAuthService(opts.Config, opts.Clients.DB)
+	s.userService = userService.NewUserService(opts.Config, opts.Clients.DB)
+	s.productService = productService.NewProductService(opts.Config, opts.Clients.DB)
+	s.notificationService = notificationService.NewNotificationService(opts.Config, opts.Clients.DB)
 
 	return s
 }
