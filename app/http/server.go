@@ -5,6 +5,7 @@ import (
 	authService "finals-be/app/auth/service"
 	notificationService "finals-be/app/notification/service"
 	productService "finals-be/app/product/service"
+	serviceService "finals-be/app/services/service"
 	userService "finals-be/app/user/service"
 	"finals-be/internal/config"
 	"finals-be/internal/util"
@@ -27,6 +28,7 @@ type Server struct {
 	userService         *userService.UserService
 	productService      *productService.ProductService
 	notificationService *notificationService.NotificationService
+	serviceService      *serviceService.ServiceService
 
 	validate *validator.Validate
 }
@@ -51,6 +53,7 @@ func NewServerOption(opts ServerOption) Server {
 	s.userService = userService.NewUserService(opts.Config, opts.Clients.DB)
 	s.productService = productService.NewProductService(opts.Config, opts.Clients.DB)
 	s.notificationService = notificationService.NewNotificationService(opts.Config, opts.Clients.DB)
+	s.serviceService = serviceService.NewServiceService(opts.Config, opts.Clients.DB, s.userService.GetUserRepository())
 
 	return s
 }

@@ -5,10 +5,10 @@ INSERT INTO tbl_kategori_produk (id, nama_kategori_produk) VALUES
 
 -- Insert Products
 INSERT INTO tbl_produk (id, kategori_produk_id, nama_produk, deskripsi_produk, gambar_produk, spesifikasi_produk) VALUES
-(1, 1, 'Fixed Satmobile', 'Data Standar Tanpa Batas, Prioritas Jaringan, Dukungan Prioritas', 'http://example.com/images/fixed.png',
+(1, 1, 'Fixed Satmobile', 'Data Standar Tanpa Batas, Prioritas Jaringan, Dukungan Prioritas', 'https://digisatlink-finals.s3.ap-southeast-1.amazonaws.com/products/fixed-clear.jpg',
 'Layanan internet berkecepatan tinggi berbasis satelit dengan sistem kuota bulanan, ditawarkan dalam bentuk langganan dengan biaya tetap setiap bulan (Monthly Regular Charge) dan minimal kontrak 12 bulan. Selain itu, perangkat Customer Terminal untuk koneksi tetap tersedia dengan skema pembelian (One Time Charge). Solusi ini dirancang untuk memenuhi kebutuhan internet bagi bisnis skala kecil, menengah, hingga besar, terutama di wilayah yang belum terjangkau layanan internet , atau berada di daerah 3T (Terpencil, Terdepan, dan Tertinggal).'),
 
-(2, 2, 'Land Satmobile', 'Data Daratan Tanpa Batas, Dalam Perjalanan + Penggunaan Laut, Prioritas Jaringan, Dukungan Prioritas', 'http://example.com/images/land.png',
+(2, 2, 'Land Satmobile', 'Data Daratan Tanpa Batas, Dalam Perjalanan + Penggunaan Laut, Prioritas Jaringan, Dukungan Prioritas', 'https://digisatlink-finals.s3.ap-southeast-1.amazonaws.com/products/mobility-clear.jpg',
 'Layanan internet berkecepatan tinggi berbasis satelit dengan sistem kuota bulanan, ditawarkan dalam bentuk langganan dengan biaya tetap setiap bulan (Monthly Regular Charge) dan minimal kontrak 12 bulan. Selain itu, perangkat Customer Terminal untuk koneksi tetap tersedia dengan skema pembelian (One Time Charge). Solusi ini dirancang untuk kebutuhan akses internet bisnis skala kecil, menengah, dan perusahaan besar khususnya sangat diperlukan saat sedang berpergian di kendaraan bergerak dan kapal.');
 
 -- Insert Devices 

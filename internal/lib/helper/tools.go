@@ -158,3 +158,47 @@ func DerefString(s *string) string {
 	}
 	return *s
 }
+
+func GetQueryInt64Pointer(r *http.Request, key string) *int64 {
+	val := r.URL.Query().Get(key)
+	if val == "" {
+		return nil
+	}
+	num, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		return nil
+	}
+	return &num
+}
+
+func GetQueryStringPointer(r *http.Request, key string) *string {
+	val := r.URL.Query().Get(key)
+	if val == "" {
+		return nil
+	}
+	return &val
+}
+
+func GetQueryBoolPointer(r *http.Request, key string) *bool {
+	val := r.URL.Query().Get(key)
+	if val == "" {
+		return nil
+	}
+	b, err := strconv.ParseBool(val)
+	if err != nil {
+		return nil
+	}
+	return &b
+}
+
+func GetQueryFloat64Pointer(r *http.Request, key string) *float64 {
+	val := r.URL.Query().Get(key)
+	if val == "" {
+		return nil
+	}
+	f, err := strconv.ParseFloat(val, 64)
+	if err != nil {
+		return nil
+	}
+	return &f
+}

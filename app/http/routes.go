@@ -19,11 +19,13 @@ func RegisterRoutes(ctx context.Context, s *Server, cfg *config.Config) *mux.Rou
 	userHandler := handler.NewUserHandler(s.userService, s.validate)
 	productHandler := handler.NewProductHandler(s.productService)
 	notificationHandler := handler.NewNotificationHandler(s.notificationService)
+	serviceHandler := handler.NewServiceHandler(s.serviceService)
 
 	RegisterAuthRoutes(router, privateAPI, authHandler)
 	RegisterUserRoutes(router, privateAPI, userHandler)
 	RegisterProductRoutes(router, privateAPI, productHandler)
 	RegisterNotificationRoutes(privateAPI, notificationHandler)
+	RegisterServicesRoutes(privateAPI, serviceHandler)
 
 	return router
 }
@@ -51,4 +53,12 @@ func RegisterNotificationRoutes(privateApi *mux.Router, h *handler.NotificationH
 	privateApi.HandleFunc("/notifications", h.GetNotifications).Methods("GET")
 	privateApi.HandleFunc("/notifications/read/{notification_id}", h.MarkAsRead).Methods("POST")
 	privateApi.HandleFunc("/notifications/read", h.MarkAllAsRead).Methods("POST")
+}
+
+func RegisterServicesRoutes(privateApi *mux.Router, h *handler.ServiceHandler) {
+	privateApi.HandleFunc("/services", h.GetServices).Methods("GET")
+	privateApi.HandleFunc("/services/{id}", h.GetServiceById).Methods("GET")
+	privateApi.HandleFunc("/services/{id}/statistics", h.GetServiceStatistics).Methods("GET")
+	privateApi.HandleFunc("/services/change-coordinates", h.ChangeServiceCoordinates).Methods("PUT")
+	privateApi.HandleFunc("/services/{gangguanId}/troubleshoot", h.GetServiceTroubleshoot).Methods("GET")
 }

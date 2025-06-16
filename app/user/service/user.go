@@ -75,3 +75,7 @@ func (u *UserService) GetUserStatus(ctx context.Context, userId int64) (response
 
 	return response, nil
 }
+
+func (s *UserService) GetUserRepository() userRepo.IUserRepository {
+	return s.userRepository
+}

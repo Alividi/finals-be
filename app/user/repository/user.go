@@ -108,8 +108,8 @@ func (r *UserRepository) GetCustomerDetail(ctx context.Context, userId int64) (u
 
 	query := fmt.Sprintf(`
 		SELECT 
-			tbl_users.id, tbl_users.username, tbl_users.role
-			tbl_customer.nama_perusahaan, tbl_customer.email_perusahaan, tbl_customer.no_telp_perusahaan, tbl_customer.no_npwp_perusahaan, 
+			tbl_users.id, tbl_users.username, tbl_users.role,
+			tbl_customer.id, tbl_customer.nama_perusahaan, tbl_customer.email_perusahaan, tbl_customer.no_telp_perusahaan, tbl_customer.no_npwp_perusahaan, 
 			tbl_alamat.provinsi, tbl_alamat.kabupaten, tbl_alamat.kecamatan, tbl_alamat.kelurahan, tbl_alamat.rt, tbl_alamat.rw, tbl_alamat.alamat, tbl_alamat.latitude, tbl_alamat.longitude
 		FROM tbl_users
 		INNER JOIN tbl_customer ON tbl_users.id = tbl_customer.user_id
@@ -121,7 +121,7 @@ func (r *UserRepository) GetCustomerDetail(ctx context.Context, userId int64) (u
 		QueryRow(ctx, query, userId).
 		Scan(
 			&usr.ID, &usr.Username, &usr.Role,
-			&usr.Customer.NamaPerusahaan, &usr.Customer.EmailPerusahaan, &usr.Customer.NoTelpPerusahaan, &usr.Customer.NoNpwpPerusahaan,
+			&usr.Customer.CustomerID, &usr.Customer.NamaPerusahaan, &usr.Customer.EmailPerusahaan, &usr.Customer.NoTelpPerusahaan, &usr.Customer.NoNpwpPerusahaan,
 			&usr.Alamat.Provinsi, &usr.Alamat.Kabupaten, &usr.Alamat.Kecamatan, &usr.Alamat.Kelurahan, &usr.Alamat.RT, &usr.Alamat.RW, &usr.Alamat.Alamat, &usr.Alamat.Latitude, &usr.Alamat.Longitude,
 		)
 
