@@ -39,7 +39,8 @@ func (r *ServiceRepository) GetServices(ctx context.Context, req dto.ServicesReq
 			s.address_line, 
 			s.active, 
 			COALESCE(du.data_usage, 0) AS data_usage,
-			s.activation_date
+			s.activation_date,
+			s.is_problem
 		FROM %s s
 		INNER JOIN %s c ON c.id = s.customer_id
 		LEFT JOIN (

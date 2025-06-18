@@ -4,10 +4,10 @@ INSERT INTO tbl_service (
     latitude, longitude, service_line_number, nickname, active,
     ip_kit, kit_sn, ssid, activation_date, is_problem
 ) VALUES
-(1, 1, 1, 'Service Fixed 50GB', 'Jl. Merdeka No. 1', 'Jakarta', -6.2088, 106.8456, 'SLN-001', 'Site Jakarta', 1, 19216801, 'KIT-001', 'SSID-JKT', '2025-06-01 10:01:00', FALSE),
-(2, 1, 2, 'Service Fixed 1TB', 'Jl. Malioboro No. 99', 'Yogyakarta', -7.8014, 110.3644, 'SLN-002', 'Site Yogyakarta', 1, 19216802, 'KIT-002', 'SSID-YOG', '2025-06-02 11:31:00', FALSE),
-(3, 2, 1, 'Service Land 50GB', 'Jl. Asia Afrika No. 88', 'Bandung', -6.9214, 107.6079, 'SLN-003', 'Site Bandung', 1, 19216803, 'KIT-003', 'SSID-BDG', '2025-06-03 12:01:00', FALSE),
-(4, 2, 2, 'Service Land 1TB', 'Jl. Sudirman No. 45', 'Jakarta', -6.2088, 106.8456, 'SLN-004', 'Site Jakarta Sudirman', 1, 19216804, 'KIT-004', 'SSID-JKT-SUD', '2025-06-04 13:01:00', FALSE);
+(1, 1, 1, 'Service Fixed 50GB', 'Jl. Merdeka No. 1', 'Jakarta', -6.2088, 106.8456, 'SLN-001', 'Site Jakarta', 1, '192.168.1', 'KIT-001', 'SSID-JKT', '2025-06-01 10:01:00', FALSE),
+(2, 1, 2, 'Service Fixed 1TB', 'Jl. Malioboro No. 99', 'Yogyakarta', -7.8014, 110.3644, 'SLN-002', 'Site Yogyakarta', 1, '192.168.2', 'KIT-002', 'SSID-YOG', '2025-06-02 11:31:00', FALSE),
+(3, 2, 1, 'Service Land 50GB', 'Jl. Asia Afrika No. 88', 'Bandung', -6.9214, 107.6079, 'SLN-003', 'Site Bandung', 1, '192.168.3', 'KIT-003', 'SSID-BDG', '2025-06-03 12:01:00', FALSE),
+(4, 2, 2, 'Service Land 1TB', 'Jl. Sudirman No. 45', 'Jakarta', -6.2088, 106.8456, 'SLN-004', 'Site Jakarta Sudirman', 1, '192.168.4', 'KIT-004', 'SSID-JKT-SUD', '2025-06-04 13:01:00', FALSE);
 
 -- Insert initial data into tbl_datausage
 -- Data Usage for Service ID 1 (SLN-001)

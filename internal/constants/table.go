@@ -4,6 +4,7 @@ const (
 	TABLE_USERS    = "tbl_users"
 	TABLE_TEKNISI  = "tbl_teknisi"
 	TABLE_CUSTOMER = "tbl_customer"
+	TABLE_ALAMAT   = "tbl_alamat"
 
 	TABLE_NOTIFIKASI = "tbl_notifikasi"
 	TABLE_TOKEN      = "tbl_token"
@@ -21,4 +22,8 @@ const (
 	TABLE_GANGGUAN = "tbl_gangguan"
 	TABLE_STEP     = "tbl_step"
 	TABLE_SUBSTEP  = "tbl_substep"
+
+	TABLE_TICKET        = "tbl_ticket"
+	TABLE_BA            = "tbl_ba"
+	TABLE_BIAYA_LAINNYA = "tbl_biaya_lainnya"
 )

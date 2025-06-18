@@ -166,3 +166,7 @@ func (s *ServiceService) GetTroubleshootSteps(ctx context.Context, gangguanId in
 		Steps:             responseSteps,
 	}, nil
 }
+
+func (s *ServiceService) GetServiceRepository() servicerepo.IServiceRepository {
+	return s.serviceRepository
+}

@@ -7,6 +7,7 @@ type GetServicesResponse struct {
 	Active         int64   `json:"active" db:"active"`
 	DataUsage      float64 `json:"data_usage" db:"data_usage"`
 	ActivationDate string  `json:"activation_date" db:"activation_date"`
+	IsProblem      bool    `json:"is_problem" db:"is_problem"`
 }
 
 type ServicesRequest struct {
@@ -29,7 +30,7 @@ type GetServiceDetailResponse struct {
 	ServiceLineNumber string  `json:"service_line_number" db:"service_line_number"`
 	Nickname          string  `json:"nickname" db:"nickname"`
 	Active            int64   `json:"active" db:"active"`
-	Ipkit             int64   `json:"ip_kit" db:"ip_kit"`
+	Ipkit             string  `json:"ip_kit" db:"ip_kit"`
 	KitSn             string  `json:"kit_sn" db:"kit_sn"`
 	SSID              string  `json:"ssid" db:"ssid"`
 	ActivationDate    string  `json:"activation_date" db:"activation_date"`

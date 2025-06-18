@@ -1,6 +1,6 @@
 CREATE TABLE tbl_ticket (
-    id integer PRIMARY KEY,
-    nomor_ticket varchar(100),
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nomor_tiket varchar(100),
     service_id integer,
     status varchar(50),
     customer_id integer,

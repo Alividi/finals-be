@@ -14,7 +14,7 @@ type Service struct {
 	ServiceLineNumber string  `db:"service_line_number"`
 	Nickname          string  `db:"nickname"`
 	Active            int64   `db:"active"`
-	Ipkit             int64   `db:"ip_kit"`
+	Ipkit             string  `db:"ip_kit"`
 	KitSn             string  `db:"kit_sn"`
 	SSID              string  `db:"ssid"`
 	ActivationDate    string  `db:"activation_date"`
@@ -30,6 +30,7 @@ type Services struct {
 	Active         int64   `json:"active" db:"active"`
 	DataUsage      float64 `json:"data_usage" db:"data_usage"`
 	ActivationDate string  `json:"activation_date" db:"activation_date"`
+	IsProblem      bool    `json:"is_problem" db:"is_problem"`
 }
 
 type Telemetry struct {

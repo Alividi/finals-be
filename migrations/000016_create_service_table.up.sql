@@ -10,7 +10,7 @@ CREATE TABLE tbl_service (
     service_line_number VARCHAR(50),
     nickname VARCHAR(255),
     active integer NOT NULL DEFAULT 0,
-    ip_kit integer,
+    ip_kit VARCHAR(50),
     kit_sn VARCHAR(50),
     ssid VARCHAR(50),
     activation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

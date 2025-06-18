@@ -20,12 +20,14 @@ func RegisterRoutes(ctx context.Context, s *Server, cfg *config.Config) *mux.Rou
 	productHandler := handler.NewProductHandler(s.productService)
 	notificationHandler := handler.NewNotificationHandler(s.notificationService)
 	serviceHandler := handler.NewServiceHandler(s.serviceService)
+	ticketHandler := handler.NewTicketHandler(s.ticketService, s.validate)
 
 	RegisterAuthRoutes(router, privateAPI, authHandler)
 	RegisterUserRoutes(router, privateAPI, userHandler)
 	RegisterProductRoutes(router, privateAPI, productHandler)
 	RegisterNotificationRoutes(privateAPI, notificationHandler)
 	RegisterServicesRoutes(privateAPI, serviceHandler)
+	RegisterTicketRoutes(privateAPI, ticketHandler)
 
 	return router
 }
@@ -61,4 +63,12 @@ func RegisterServicesRoutes(privateApi *mux.Router, h *handler.ServiceHandler) {
 	privateApi.HandleFunc("/services/{id}/statistics", h.GetServiceStatistics).Methods("GET")
 	privateApi.HandleFunc("/services/change-coordinates", h.ChangeServiceCoordinates).Methods("PUT")
 	privateApi.HandleFunc("/services/{gangguanId}/troubleshoot", h.GetServiceTroubleshoot).Methods("GET")
+}
+
+func RegisterTicketRoutes(privateApi *mux.Router, h *handler.TicketHandler) {
+	privateApi.HandleFunc("/tickets", h.CreateTicket).Methods("POST")
+	privateApi.HandleFunc("/tickets", h.GetTickets).Methods("GET")
+	privateApi.HandleFunc("/tickets/summary", h.GetTicketsSummary).Methods("GET")
+	privateApi.HandleFunc("/tickets/{ticketId}", h.GetTicketById).Methods("GET")
+	privateApi.HandleFunc("/tickets/assign", h.AssignTicket).Methods("POST")
 }
