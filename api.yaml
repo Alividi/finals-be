@@ -1,0 +1,608 @@
+openapi: 3.0.0
+info:
+  title: API Documentation for final project
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: auth
+    description: Authentication related endpoints
+  - name: user
+    description: Operations about user management
+  - name: service
+    description: Service related endpoints
+  - name: technician
+    description: Technician related endpoints
+  - name: ticket
+    description: Ticket management
+  - name: ba
+    description: Berita Acara related endpoints
+  - name: notification
+    description: Notification related endpoints
+  - name: product
+    description: Product related endpoints
+  - name: order
+    description: Order related endpoints
+  - name: promotion
+    description: Promotion related endpoints
+paths: 
+  /login:
+    post:
+      summary: Login and save FCM token
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - fcm_token
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                fcm_token:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                      refresh_token:
+                        type: string
+  /refresh-token:
+    post:
+      summary: Refreshing JWT access token
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Successful refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                      refresh_token:
+                        type: string
+  /logout:
+    post:
+      summary: Logout and delete FCM token
+      tags:
+        - auth
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fcm_token
+              properties:
+                fcm_token:
+                  type: string
+      responses:
+        '200':
+          description: Successful logout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+  /current-user:
+    get:
+      summary: Get data of the currently logged-in user
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                      username:
+                        type: string
+                      phone:
+                        type: string
+                      email:
+                        type: string
+                      address:
+                        type: string
+  /reset-password:
+    put:
+      summary: Reset password using email
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+  /change-password:
+    put:
+      summary: Change password using old password
+      tags:
+        - auth
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - old_password
+              properties:
+                password:
+                  type: string
+                old_password:
+                  type: string
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+  /register:
+    post:
+      summary: User customer registration
+      tags:
+        - auth
+      responses:
+        '201':
+          description: User registered successfully
+  
+  /users/status:
+    get:
+      summary: Get user status (ex= notification count)
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      notification_count:
+                        type: integer
+  /region:
+    get:
+      summary: Get region data
+      tags:
+        - service
+      responses:
+        '200':
+          description: Region data retrieved
+  /users/profile:
+    get:
+      summary: Get user profile data
+      tags:
+        - user
+      responses:
+        '200':
+          description: Profile data retrieved
+  /services:
+    get:
+      summary: Get list of services user has
+      tags:
+        - service
+      responses:
+        '200':
+          description: List of services retrieved
+
+  /services/{serviceId}:
+    get:
+      summary: Get service detail
+      tags:
+        - service
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Service details retrieved
+  /services/statistic:
+    get:
+      summary: Get telemetry data for services
+      tags:
+        - service
+      responses:
+        '200':
+          description: Telemetry data retrieved
+  /services/change-coordinate:
+    put:
+      summary: Change coordinate of a service
+      tags:
+        - service
+      responses:
+        '200':
+          description: Coordinates updated
+  /solutions:
+    get:
+      summary: Get solutions based on problem checking
+      tags:
+        - service
+      responses:
+        '200':
+          description: Solutions retrieved
+  /technicians:
+    get:
+      summary: Get list of technicians
+      tags:
+        - technician
+      responses:
+        '200':
+          description: Technicians list retrieved
+  /technician/{technicianId}:
+    get:
+      summary: Get technician detail data
+      tags:
+        - technician
+      parameters:
+        - name: technicianId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Technician details retrieved
+  /tickets:
+    post:
+      summary: Create a ticket
+      tags:
+        - ticket
+      responses:
+        '201':
+          description: Ticket created
+    get:
+      summary: Get all tickets
+      tags:
+        - ticket
+      responses:
+        '200':
+          description: List of tickets retrieved
+  /tickets/summary:
+    get:
+      summary: Get ticket summary
+      tags:
+        - ticket
+      responses:
+        '200':
+          description: Ticket summary retrieved
+  /tickets/{ticketId}:
+    get:
+      summary: Get ticket detail
+      tags:
+        - ticket
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ticket details retrieved
+  /tickets/assign:
+    post:
+      summary: Assign technician to ticket
+      tags:
+        - ticket
+      responses:
+        '200':
+          description: Technician assigned
+  /ba:
+    post:
+      summary: Create berita acara ticket
+      tags:
+        - ba
+      responses:
+        '201':
+          description: BA created
+  /ba/{ticketId}:
+    get:
+      summary: Get berita acara detail
+      tags:
+        - ba
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: BA details retrieved
+  
+  /notifications:
+    get:
+      summary: Get list of notifications
+      tags:
+        - notification
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+        - name: type
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notifications retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        is_read:
+                          type: boolean
+                        judul:
+                          type: string
+                        deskripsi:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date
+                        type:
+                          type: string
+  
+  /notifications/{notificationId}/read:
+    post:
+      summary: Read one notification
+      tags:
+        - notification
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+  
+  /notification/read:
+    post:
+      summary: Mark all notifications as read
+      tags:
+        - notification
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: All notifications marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+  
+  /products:
+    get:
+      summary: Get list of products
+      tags:
+        - product
+      responses:
+        '200':
+          description: List of products retrieved
+  /products/{productId}:
+    get:
+      summary: Get product detail data
+      tags:
+        - product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product details retrieved
+  /products/{productId}/faq:
+    get:
+      summary: Get product FAQ data
+      tags:
+        - product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product FAQ retrieved
+  /orders:
+    get:
+      summary: Get list of orders
+      tags:
+        - order
+      responses:
+        '200':
+          description: List of orders retrieved
+  /orders/{orderId}:
+    get:
+      summary: Get order detail
+      tags:
+        - order
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details retrieved
+  /orders/tracking/{orderNumber}:
+    get:
+      summary: Get order tracking information
+      tags:
+        - order
+      parameters:
+        - name: orderNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order tracking retrieved
+  /promotions:
+    get:
+      summary: Get list of promotions
+      tags:
+        - promotion
+      responses:
+        '200':
+          description: Promotion banners retrieved
+  /promotions/{promotionId}:
+    get:
+      summary: Get promotion banner details
+      tags:
+        - promotion
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Promotion details retrieved
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
