@@ -6,6 +6,7 @@ import (
 	"finals-be/internal/lib/auth"
 	"finals-be/internal/lib/helper"
 	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -122,4 +123,93 @@ func (h *TicketHandler) AssignTicket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helper.WriteResponse(r.Context(), w, nil, nil)
+}
+
+func (h *TicketHandler) CreateBa(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	userCtx := auth.GetUserContext(ctx)
+
+	// Parse form
+	if err := r.ParseMultipartForm(32 * 1024 * 1024); err != nil {
+		helper.WriteResponse(ctx, w, helper.NewErrBadRequest("failed to parse multipart form: "+err.Error()), nil)
+		return
+	}
+
+	// Extract and validate basic fields
+	ticketIDStr := helper.GetFormValue(r, "ticket_id")
+	detailBa := helper.GetFormValue(r, "detail_ba")
+
+	ticketID, err := strconv.ParseInt(ticketIDStr, 10, 64)
+	if err != nil {
+		helper.WriteResponse(ctx, w, helper.NewErrBadRequest("invalid ticket_id"), nil)
+		return
+	}
+
+	// Get main BA images
+	gambarPerangkat, gambarPerangkatHeader, _ := r.FormFile("gambar_perangkat")
+	gambarSpeedtest, gambarSpeedtestHeader, _ := r.FormFile("gambar_speedtest")
+
+	// Handle biaya_lainnya
+	biayaLainnya := []*dtoTicket.BiayaLainnyaRequest{}
+	for i := 0; ; i++ {
+		prefix := "biaya_lainnya[" + strconv.Itoa(i) + "]"
+		if helper.GetFormValue(r, prefix+"[jenis_biaya]") == "" {
+			break // Stop when there's no more entry
+		}
+
+		jumlahStr := helper.GetFormValue(r, prefix+"[jumlah]")
+		jumlah, err := strconv.ParseInt(jumlahStr, 10, 64)
+		if err != nil {
+			helper.WriteResponse(ctx, w, helper.NewErrBadRequest("invalid jumlah at index "+strconv.Itoa(i)), nil)
+			return
+		}
+
+		jenisBiaya := helper.GetFormValue(r, prefix+"[jenis_biaya]")
+		file, fileHeader, _ := r.FormFile(prefix + "[lampiran]")
+
+		biayaLainnya = append(biayaLainnya, &dtoTicket.BiayaLainnyaRequest{
+			JenisBiaya:     jenisBiaya,
+			Jumlah:         jumlah,
+			Lampiran:       file,
+			LampiranHeader: fileHeader,
+		})
+	}
+
+	// Create payload
+	payload := &dtoTicket.CreateBaRequest{
+		TicketID:              ticketID,
+		DetailBa:              detailBa,
+		GambarPerangkat:       gambarPerangkat,
+		GambarPerangkatHeader: gambarPerangkatHeader,
+		GambarSpeedtest:       gambarSpeedtest,
+		GambarSpeedtestHeader: gambarSpeedtestHeader,
+		BiayaLainnya:          biayaLainnya,
+	}
+
+	// Validate required fields
+	if err := h.validate.Struct(payload); err != nil {
+		helper.WriteResponse(ctx, w, helper.NewErrValidation(err), nil)
+		return
+	}
+
+	// Call service
+	err = h.ticketService.CreateBa(ctx, userCtx.ID, payload)
+	if err != nil {
+		helper.WriteResponse(ctx, w, err, nil)
+		return
+	}
+
+	helper.WriteResponse(ctx, w, nil, map[string]string{"message": "Berita Acara created successfully"})
+}
+
+func (h *TicketHandler) GetBaDetail(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	ticketId := helper.GetURLParamInt64(r, "ticketId")
+	baDetail, err := h.ticketService.GetBaDetail(ctx, ticketId)
+	if err != nil {
+		helper.WriteResponse(ctx, w, err, nil)
+		return
+	}
+	helper.WriteResponse(ctx, w, nil, baDetail)
 }

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	servicerepo "finals-be/app/services/repository"
+	shared "finals-be/app/shared/service"
 	"finals-be/app/ticket/dto"
 	"finals-be/app/ticket/model"
 	tiketrepo "finals-be/app/ticket/repository"
@@ -15,6 +16,9 @@ import (
 	"finals-be/internal/lib/auth"
 	"finals-be/internal/lib/helper"
 	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
 
 	"github.com/rs/zerolog/log"
 )
@@ -25,9 +29,11 @@ type TicketService struct {
 	ticketRepository  tiketrepo.ITicketRepository
 	userRepository    userrepo.IUserRepository
 	serviceRepository servicerepo.IServiceRepository
+	s3Client          *shared.S3Service
 }
 
-func NewTicketService(cfg *config.Config, conn *connection.SQLServerConnectionManager, userRepo userrepo.IUserRepository, serviceRepo servicerepo.IServiceRepository) *TicketService {
+func NewTicketService(cfg *config.Config, conn *connection.SQLServerConnectionManager, userRepo userrepo.IUserRepository,
+	serviceRepo servicerepo.IServiceRepository, s3Client *shared.S3Service) *TicketService {
 	db := conn.GetTransaction()
 	return &TicketService{
 		cfg:               cfg,
@@ -35,6 +41,7 @@ func NewTicketService(cfg *config.Config, conn *connection.SQLServerConnectionMa
 		ticketRepository:  tiketrepo.NewTicketRepository(db),
 		userRepository:    userRepo,
 		serviceRepository: serviceRepo,
+		s3Client:          s3Client,
 	}
 }
 
@@ -288,4 +295,99 @@ func (s *TicketService) AssignTicket(ctx context.Context, ticketId int64, teknis
 
 	log.Info().Msgf("Ticket with ID %d assigned to teknisi with ID %d", ticketId, teknisiId)
 	return nil
+}
+
+func (s *TicketService) CreateBa(ctx context.Context, userID int64, req *dto.CreateBaRequest) error {
+	// Start transaction
+	if err := s.db.Begin(ctx); err != nil {
+		return helper.NewErrInternalServer("failed to begin transaction: " + err.Error())
+	}
+	defer func() {
+		_ = s.db.Rollback(ctx) // safe rollback if commit wasn't called
+	}()
+
+	// Upload main images
+	gambarPerangkatURL, err := s.uploadSingleFile(ctx, "ba_gambar_perangkat", userID, req.GambarPerangkatHeader, req.GambarPerangkat)
+	if err != nil {
+		return err
+	}
+	gambarSpeedtestURL, err := s.uploadSingleFile(ctx, "ba_gambar_speedtest", userID, req.GambarSpeedtestHeader, req.GambarSpeedtest)
+	if err != nil {
+		return err
+	}
+
+	// Create BA
+	ba := &model.Ba{
+		FkTicketID:      req.TicketID,
+		GambarPerangkat: gambarPerangkatURL,
+		GambarSpeedtest: gambarSpeedtestURL,
+		DetailBa:        req.DetailBa,
+	}
+
+	baID, err := s.ticketRepository.CreateBa(ctx, ba)
+	if err != nil {
+		return helper.NewErrInternalServer("failed to create BA: " + err.Error())
+	}
+
+	// Prepare biaya lainnya
+	var biayaModels []*model.BiayaLainnya
+	for _, biaya := range req.BiayaLainnya {
+		lampiranURL, err := s.uploadSingleFile(ctx, "ba_biaya_lainnya", userID, biaya.LampiranHeader, biaya.Lampiran)
+		if err != nil {
+			return err
+		}
+
+		biayaModels = append(biayaModels, &model.BiayaLainnya{
+			FkBaID:     baID,
+			JenisBiaya: biaya.JenisBiaya,
+			Jumlah:     biaya.Jumlah,
+			Lampiran:   lampiranURL,
+		})
+	}
+
+	// Bulk insert biaya lainnya
+	if len(biayaModels) > 0 {
+		if err := s.ticketRepository.BulkInsertBiayaLainnya(ctx, baID, biayaModels); err != nil {
+			return helper.NewErrInternalServer("failed to insert biaya lainnya: " + err.Error())
+		}
+	}
+
+	// Commit transaction
+	if err := s.db.Commit(ctx); err != nil {
+		return helper.NewErrInternalServer("failed to commit transaction: " + err.Error())
+	}
+
+	return nil
+}
+
+func (s *TicketService) uploadSingleFile(ctx context.Context, fileType string, userID int64, header *multipart.FileHeader, file multipart.File) (string, error) {
+	if file == nil || header == nil {
+		return "", helper.NewErrBadRequest(fmt.Sprintf("missing file for %s", fileType))
+	}
+
+	defer file.Close()
+
+	// Read content type
+	buf := make([]byte, 512)
+	if _, err := file.Read(buf); err != nil {
+		return "", helper.NewErrBadRequest("failed to read file: " + err.Error())
+	}
+	contentType := http.DetectContentType(buf)
+
+	// Rewind file
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return "", helper.NewErrInternalServer("failed to rewind file: " + err.Error())
+	}
+
+	// Upload
+	url, err := s.s3Client.UploadFile(ctx, header.Filename, fileType, userID, file, contentType)
+	if err != nil {
+		return "", helper.NewErrInternalServer("failed to upload to S3: " + err.Error())
+	}
+
+	return url, nil
+}
+
+func (s *TicketService) GetBaDetail(ctx context.Context, ticketID int64) (*dto.BaDetailResponse, error) {
+	return s.ticketRepository.GetBaDetailByTicketID(ctx, ticketID)
 }

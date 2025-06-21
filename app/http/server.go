@@ -6,6 +6,7 @@ import (
 	notificationService "finals-be/app/notification/service"
 	productService "finals-be/app/product/service"
 	serviceService "finals-be/app/services/service"
+	shared "finals-be/app/shared/service"
 	ticketService "finals-be/app/ticket/service"
 	userService "finals-be/app/user/service"
 	"finals-be/internal/config"
@@ -49,14 +50,14 @@ func NewServerOption(opts ServerOption) Server {
 	s.validate = validator.New()
 
 	//firebaseService := notificationService.NewFirebaseService(opts.Config, opts.Clients.DB, opts.Clients.Message)
-	//s3Service := shared.NewS3Service(opts.Config, opts.Clients.S3Client)
+	s3Service := shared.NewS3Service(opts.Config, opts.Clients.S3Client)
 
 	s.authService = authService.NewAuthService(opts.Config, opts.Clients.DB)
 	s.userService = userService.NewUserService(opts.Config, opts.Clients.DB)
 	s.productService = productService.NewProductService(opts.Config, opts.Clients.DB)
 	s.notificationService = notificationService.NewNotificationService(opts.Config, opts.Clients.DB)
 	s.serviceService = serviceService.NewServiceService(opts.Config, opts.Clients.DB, s.userService.GetUserRepository())
-	s.ticketService = ticketService.NewTicketService(opts.Config, opts.Clients.DB, s.userService.GetUserRepository(), s.serviceService.GetServiceRepository())
+	s.ticketService = ticketService.NewTicketService(opts.Config, opts.Clients.DB, s.userService.GetUserRepository(), s.serviceService.GetServiceRepository(), s3Service)
 
 	return s
 }

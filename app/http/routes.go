@@ -71,4 +71,8 @@ func RegisterTicketRoutes(privateApi *mux.Router, h *handler.TicketHandler) {
 	privateApi.HandleFunc("/tickets/summary", h.GetTicketsSummary).Methods("GET")
 	privateApi.HandleFunc("/tickets/{ticketId}", h.GetTicketById).Methods("GET")
 	privateApi.HandleFunc("/tickets/assign", h.AssignTicket).Methods("POST")
+	//ba routes
+	privateApi.HandleFunc("/ba", h.CreateBa).Methods("POST")
+	privateApi.HandleFunc("/ba/{ticketId}", h.GetBaDetail).Methods("GET")
+
 }

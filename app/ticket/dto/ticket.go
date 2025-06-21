@@ -1,5 +1,7 @@
 package dto
 
+import "mime/multipart"
+
 type InsertTicketRequest struct {
 	UserId     int64 `json:"user_id" validate:"required"`
 	CustomerID int64 `json:"-"`
@@ -44,4 +46,37 @@ type TicketDetailResponse struct {
 type AsignTicketRequest struct {
 	TicketId  int64 `json:"ticket_id" validate:"required"`
 	TeknisiId int64 `json:"teknisi_id" validate:"required"`
+}
+
+type BiayaLainnyaRequest struct {
+	JenisBiaya     string                `json:"jenis_biaya" db:"jenis_biaya"`
+	Jumlah         int64                 `json:"jumlah" db:"jumlah"`
+	Lampiran       multipart.File        `json:"lampiran"`
+	LampiranHeader *multipart.FileHeader `json:"lampiran_headers"`
+}
+
+type CreateBaRequest struct {
+	TicketID              int64                  `json:"ticket_id" validate:"required"`
+	GambarPerangkat       multipart.File         `json:"gambar_perangkat"`
+	GambarPerangkatHeader *multipart.FileHeader  `json:"gambar_perangkat_headers"`
+	GambarSpeedtest       multipart.File         `json:"gambar_speedtest"`
+	GambarSpeedtestHeader *multipart.FileHeader  `json:"gambar_speedtest_headers"`
+	DetailBa              string                 `json:"detail_ba" validate:"required"`
+	BiayaLainnya          []*BiayaLainnyaRequest `json:"biaya_lainnya"`
+}
+
+type BiayaLainnya struct {
+	JenisBiaya string `json:"jenis_biaya" db:"jenis_biaya"`
+	Jumlah     int64  `json:"jumlah" db:"jumlah"`
+	Lampiran   string `json:"lampiran" db:"lampiran"`
+}
+
+type BaDetailResponse struct {
+	ID              int64           `json:"id" db:"id"`
+	TicketID        int64           `json:"ticket_id" db:"ticket_id"`
+	NomorTiket      string          `json:"nomor_tiket" db:"nomor_tiket"`
+	GambarPerangkat string          `json:"gambar_perangkat" db:"gambar_perangkat"`
+	GambarSpeedtest string          `json:"gambar_speedtest" db:"gambar_speedtest"`
+	DetailBa        string          `json:"detail_ba" db:"detail_ba"`
+	BiayaLainnya    []*BiayaLainnya `json:"biaya_lainnya" db:"biaya_lainnya"`
 }

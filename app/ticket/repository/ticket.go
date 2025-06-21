@@ -7,6 +7,7 @@ import (
 	"finals-be/internal/connection"
 	"finals-be/internal/constants"
 	"fmt"
+	"strings"
 )
 
 type ITicketRepository interface {
@@ -16,6 +17,9 @@ type ITicketRepository interface {
 	GetTicketsSummary(ctx context.Context, role string, userId int64, teknisiId *int64, customerId *int64) (*dto.TicketsSummaryResponse, error)
 	GetTicketById(ctx context.Context, ticketId int64) (*model.Ticket, error)
 	AssignTicket(ctx context.Context, ticketId, teknisiId int64) error
+	CreateBa(ctx context.Context, ticket *model.Ba) (int64, error)
+	BulkInsertBiayaLainnya(ctx context.Context, baID int64, biaya []*model.BiayaLainnya) error
+	GetBaDetailByTicketID(ctx context.Context, ticketID int64) (*dto.BaDetailResponse, error)
 }
 
 type TicketRepository struct {
@@ -152,4 +156,96 @@ func (r *TicketRepository) AssignTicket(ctx context.Context, ticketId, teknisiId
 
 	_, err := r.db.Exec(ctx, query, teknisiId, constants.TICKET_STATUS_IN_PROGRESS, ticketId)
 	return err
+}
+
+func (r *TicketRepository) CreateBa(ctx context.Context, ba *model.Ba) (int64, error) {
+	query := fmt.Sprintf(`
+	INSERT INTO %s (ticket_id, gambar_perangkat, gambar_speedtest, detail_ba)
+	VALUES ($1, $2, $3, $4)
+	RETURNING id`,
+		constants.TABLE_BA)
+
+	query = r.db.RebindTxx(query)
+
+	var id int64
+	row := r.db.QueryRowTxx(
+		ctx,
+		query,
+		ba.FkTicketID,
+		ba.GambarPerangkat,
+		ba.GambarSpeedtest,
+		ba.DetailBa,
+	)
+
+	if err := row.Scan(&id); err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (r *TicketRepository) BulkInsertBiayaLainnya(ctx context.Context, baID int64, biaya []*model.BiayaLainnya) error {
+	if len(biaya) == 0 {
+		return nil
+	}
+	valueStrings := make([]string, 0, len(biaya))
+	args := make([]interface{}, 0, len(biaya)*4)
+
+	for i, b := range biaya {
+		b.FkBaID = baID
+		valueStrings = append(valueStrings, fmt.Sprintf("($%d, $%d, $%d, $%d)", i*4+1, i*4+2, i*4+3, i*4+4))
+		args = append(args, b.FkBaID, b.JenisBiaya, b.Jumlah, b.Lampiran)
+	}
+
+	query := fmt.Sprintf(`
+		INSERT INTO %s (ba_id, jenis_biaya, jumlah, lampiran)
+		VALUES %s`,
+		constants.TABLE_BIAYA_LAINNYA,
+		strings.Join(valueStrings, ", "),
+	)
+
+	query = r.db.RebindTxx(query)
+
+	if _, err := r.db.ExecTxx(ctx, query, args...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *TicketRepository) GetBaDetailByTicketID(ctx context.Context, ticketID int64) (*dto.BaDetailResponse, error) {
+	query := fmt.Sprintf(`
+		SELECT 
+			ba.id,
+			ba.ticket_id,
+			t.nomor_tiket,
+			ba.gambar_perangkat,
+			ba.gambar_speedtest,
+			ba.detail_ba
+		FROM %s ba
+		JOIN %s t ON ba.ticket_id = t.id
+		WHERE ba.ticket_id = $1
+	`, constants.TABLE_BA, constants.TABLE_TICKET)
+
+	var ba dto.BaDetailResponse
+	if err := r.db.Get(ctx, &ba, query, ticketID); err != nil {
+		return nil, err
+	}
+
+	// fetch biaya lainnya
+	biayaQuery := fmt.Sprintf(`
+		SELECT 
+			jenis_biaya,
+			jumlah,
+			lampiran
+		FROM %s
+		WHERE ba_id = $1
+	`, constants.TABLE_BIAYA_LAINNYA)
+
+	var biaya []*dto.BiayaLainnya
+	if err := r.db.Select(ctx, &biaya, biayaQuery, ba.ID); err != nil {
+		return nil, err
+	}
+
+	ba.BiayaLainnya = biaya
+	return &ba, nil
 }

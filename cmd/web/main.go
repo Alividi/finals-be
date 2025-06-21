@@ -32,6 +32,11 @@ func main() {
 	firebaseClient := initFirebaseClient(cfg)
 	s3Client := s3.NewFromConfig(*awsConfig)
 
+	_, err = s3Client.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
+	if err != nil {
+		log.Fatal().Err(err).Msg("S3 test call failed")
+	}
+
 	defer db.Close()
 
 	wg := new(sync.WaitGroup)
@@ -88,9 +93,13 @@ func getAwsConfig(cfg *config.Config) *aws.Config {
 		}, nil
 	})
 
-	config, err := awsconfig.LoadDefaultConfig(context.TODO(),
-		awsconfig.WithCredentialsProvider(creds),
+	config, err := awsconfig.LoadDefaultConfig(
+		context.TODO(),
 		awsconfig.WithRegion(cfg.AWS.Region),
+		awsconfig.WithCredentialsProvider(creds),
+		awsconfig.WithRetryer(func() aws.Retryer {
+			return aws.NopRetryer{}
+		}),
 	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to load AWS config")

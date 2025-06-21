@@ -11,3 +11,19 @@ type Ticket struct {
 	CreatedAt  string `json:"created_at" db:"created_at"`
 	UpdatedAt  string `json:"updated_at" db:"updated_at"`
 }
+
+type Ba struct {
+	ID              int64  `db:"id" json:"id"`
+	FkTicketID      int64  `db:"ticket_id" json:"ticket_id"`
+	GambarPerangkat string `db:"gambar_perangkat" json:"gambar_perangkat"`
+	GambarSpeedtest string `db:"gambar_speedtest" json:"gambar_speedtest"`
+	DetailBa        string `db:"detail_ba" json:"detail_ba"`
+}
+
+type BiayaLainnya struct {
+	ID         int64  `db:"id" json:"id"`
+	FkBaID     int64  `db:"ba_id" json:"ba_id"`
+	JenisBiaya string `db:"jenis_biaya" json:"jenis_biaya"`
+	Jumlah     int64  `db:"jumlah" json:"jumlah"`
+	Lampiran   string `db:"lampiran" json:"lampiran"`
+}
