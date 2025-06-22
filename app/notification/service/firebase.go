@@ -80,6 +80,7 @@ func (s *FirebaseService) SendNotifications(ctx context.Context, req model.Notif
 	err = s.notificationRepo.InsertNotifications(ctx, req)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to insert notification")
+		return err
 	}
 
 	return nil

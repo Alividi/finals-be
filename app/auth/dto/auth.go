@@ -16,5 +16,6 @@ type RefreshTokenRequest struct {
 }
 
 type LogoutRequest struct {
+	UserID   int64  `json:"user_id" validate:"required"`
 	FCMToken string `json:"fcm_token" validate:"required"`
 }

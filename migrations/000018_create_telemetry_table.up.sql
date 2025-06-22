@@ -1,5 +1,5 @@
 CREATE TABLE tbl_telemetry (
-    id integer PRIMARY KEY,
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_id integer,
     ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     downlink_troughput float,

@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS tbl_notifikasi;
 
 create table tbl_notifikasi (
-    id integer primary key,
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id integer,
     is_read boolean default false,
     judul varchar(255),

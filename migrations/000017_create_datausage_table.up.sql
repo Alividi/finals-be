@@ -1,5 +1,5 @@
 CREATE TABLE tbl_datausage (
-    id integer PRIMARY KEY,
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_id integer,
     data_usage float,
     ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

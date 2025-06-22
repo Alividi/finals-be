@@ -52,10 +52,10 @@ func NewServerOption(opts ServerOption) Server {
 	//firebaseService := notificationService.NewFirebaseService(opts.Config, opts.Clients.DB, opts.Clients.Message)
 	s3Service := shared.NewS3Service(opts.Config, opts.Clients.S3Client)
 
-	s.authService = authService.NewAuthService(opts.Config, opts.Clients.DB)
+	s.notificationService = notificationService.NewNotificationService(opts.Config, opts.Clients.DB)
+	s.authService = authService.NewAuthService(opts.Config, opts.Clients.DB, s.notificationService.GetNotificationRepository())
 	s.userService = userService.NewUserService(opts.Config, opts.Clients.DB)
 	s.productService = productService.NewProductService(opts.Config, opts.Clients.DB)
-	s.notificationService = notificationService.NewNotificationService(opts.Config, opts.Clients.DB)
 	s.serviceService = serviceService.NewServiceService(opts.Config, opts.Clients.DB, s.userService.GetUserRepository())
 	s.ticketService = ticketService.NewTicketService(opts.Config, opts.Clients.DB, s.userService.GetUserRepository(), s.serviceService.GetServiceRepository(), s3Service)
 

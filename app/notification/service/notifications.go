@@ -67,3 +67,7 @@ func (s *NotificationService) MarkAllAsRead(ctx context.Context, userId int64) e
 
 	return nil
 }
+
+func (s *NotificationService) GetNotificationRepository() repository.INotificationRepository {
+	return s.notificationRepo
+}

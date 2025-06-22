@@ -15,7 +15,7 @@ CREATE TABLE tbl_service (
     ssid VARCHAR(50),
     activation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_problem BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (customer_id) REFERENCES tbl_produk(id),
+    FOREIGN KEY (customer_id) REFERENCES tbl_customer(id),
     FOREIGN KEY (product_id) REFERENCES tbl_produk(id)
 );
 

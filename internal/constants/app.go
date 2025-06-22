@@ -17,4 +17,10 @@ const (
 	ROLE_ADMIN    = "admin"
 	ROLE_CUSTOMER = "customer"
 	ROLE_TEKNISI  = "teknisi"
+
+	// Notification Types
+	NOTIFICATION_TYPE_SERVICE = "service"
+	NOTIFICATION_TYPE_TICKET  = "ticket"
+	NOTIFICATION_TYPE_PRODUCT = "product"
+	NOTIFICATION_TYPE_AUTH    = "auth"
 )

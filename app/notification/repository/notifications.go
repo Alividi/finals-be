@@ -9,6 +9,8 @@ import (
 	"finals-be/internal/lib/helper"
 	"fmt"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 type INotificationRepository interface {
@@ -26,7 +28,7 @@ type NotificationRepo struct {
 }
 
 func NewNotificationRepository(db connection.Connection) *NotificationRepo {
-	return &NotificationRepo{db}
+	return &NotificationRepo{db: db}
 }
 
 func (r *NotificationRepo) GetFCMTokens(ctx context.Context, userId int64) (tokens []string, err error) {
@@ -85,11 +87,12 @@ func (r *NotificationRepo) DeleteFCMToken(ctx context.Context, userId int64, tok
 func (r *NotificationRepo) InsertNotifications(ctx context.Context, req model.Notification) error {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (user_id, judul, deskripsi, is_read, type, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`, constants.TABLE_NOTIFIKASI)
 
-	_, err := r.db.Exec(ctx, query, req.UserID, req.Judul, req.Deskripsi, req.Type)
+	_, err := r.db.Exec(ctx, query, req.UserID, req.Judul, req.Deskripsi, false, req.Type, req.CreatedAt, req.UpdatedAt)
 	if err != nil {
+		log.Error().Msgf("Failed to insert notification: %v", err)
 		return err
 	}
 

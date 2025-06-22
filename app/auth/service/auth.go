@@ -3,29 +3,33 @@ package service
 import (
 	"context"
 	"finals-be/app/auth/dto"
+	notificationRepo "finals-be/app/notification/repository"
 	userRepo "finals-be/app/user/repository"
 	"finals-be/internal/config"
 	"finals-be/internal/connection"
 	"finals-be/internal/lib/auth"
 	"finals-be/internal/lib/helper"
-	"log"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthService struct {
-	cfg            *config.Config
-	db             *connection.MultiInstruction
-	userRepository userRepo.IUserRepository
+	cfg              *config.Config
+	db               *connection.MultiInstruction
+	userRepository   userRepo.IUserRepository
+	notificationRepo notificationRepo.INotificationRepository
 }
 
-func NewAuthService(cfg *config.Config, conn *connection.SQLServerConnectionManager) *AuthService {
+func NewAuthService(cfg *config.Config, conn *connection.SQLServerConnectionManager, notificationRepo notificationRepo.INotificationRepository) *AuthService {
 	db := conn.GetTransaction()
 	return &AuthService{
-		cfg:            cfg,
-		db:             db,
-		userRepository: userRepo.NewUserRepository(db),
+		cfg:              cfg,
+		db:               db,
+		userRepository:   userRepo.NewUserRepository(db),
+		notificationRepo: notificationRepo,
 	}
 }
 
@@ -43,20 +47,28 @@ func (a *AuthService) Login(ctx context.Context, request dto.LoginRequest) (resp
 	accessTokenClaims := auth.NewAuthClaims(user.ID, user.Username, user.Role, a.cfg.App.Name, time.Now().Add(a.cfg.JWT.LoginExpirationDuration))
 	accessToken, err := auth.GenerateToken(accessTokenClaims, &a.cfg.JWT)
 	if err != nil {
-		log.Default().Println("Failed to generate accessToken")
+		log.Error().Err(err).Msg("Failed to generate accessToken")
 		return
 	}
 
 	refreshTokenClaims := auth.NewAuthClaims(user.ID, user.Username, user.Role, a.cfg.App.Name, time.Now().Add(a.cfg.JWT.RefreshExpirationDuration))
 	refreshToken, err := auth.GenerateToken(refreshTokenClaims, &a.cfg.JWT)
 	if err != nil {
-		log.Default().Println("Failed to generate refreshToken")
+		log.Error().Err(err).Msg("Failed to generate refreshToken")
 		return
 	}
 
 	if err = a.userRepository.StoreRefreshToken(ctx, user.Username, &refreshToken); err != nil {
-		log.Default().Println("Failed to store refresh token")
+		log.Error().Err(err).Msg("Failed to store refresh token")
 		return
+	}
+
+	if request.FCMToken != "" {
+		err = a.notificationRepo.StoreFCMToken(ctx, user.ID, request.FCMToken)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to insert FCM token")
+			return response, err
+		}
 	}
 
 	response = dto.LoginResponse{
@@ -71,13 +83,13 @@ func (a *AuthService) RefreshToken(ctx context.Context, request dto.RefreshToken
 
 	user, err := a.userRepository.GetByRefreshToken(ctx, request.RefreshToken)
 	if err != nil {
-		log.Default().Println("Failed to find user")
+		log.Error().Err(err).Msg("Failed to find user")
 		return
 	}
 
 	refreshTokenClaims, err := auth.ValidateToken(&a.cfg.JWT, *user.RefreshToken)
 	if err != nil {
-		log.Default().Println("Invalid token")
+		log.Error().Err(err).Msg("Invalid token")
 		return
 	}
 
@@ -86,18 +98,18 @@ func (a *AuthService) RefreshToken(ctx context.Context, request dto.RefreshToken
 	accessTokenClaims := auth.NewAuthClaims(user.ID, user.Username, user.Role, a.cfg.App.Name, time.Now().Add(a.cfg.JWT.LoginExpirationDuration))
 	accessToken, err := auth.GenerateToken(accessTokenClaims, &a.cfg.JWT)
 	if err != nil {
-		log.Default().Println("Failed to generate accessToken")
+		log.Error().Err(err).Msg("Failed to generate accessToken")
 		return
 	}
 
 	refreshToken, err := auth.GenerateToken(refreshTokenClaims, &a.cfg.JWT)
 	if err != nil {
-		log.Default().Println("Failed to generate refreshToken")
+		log.Error().Err(err).Msg("Failed to generate refreshToken")
 		return
 	}
 
 	if err = a.userRepository.StoreRefreshToken(ctx, user.Username, &refreshToken); err != nil {
-		log.Default().Println("Failed to store refresh token")
+		log.Error().Err(err).Msg("Failed to store refresh token")
 		return
 	}
 
@@ -109,13 +121,19 @@ func (a *AuthService) RefreshToken(ctx context.Context, request dto.RefreshToken
 	return response, err
 }
 
-func (a *AuthService) Logout(ctx context.Context, request dto.LogoutRequest) error {
+func (a *AuthService) Logout(ctx context.Context, request dto.LogoutRequest) (err error) {
 
 	user := auth.GetUserContext(ctx)
 
 	a.userRepository.StoreRefreshToken(ctx, user.Username, nil)
 
-	// TODO: implement remove FcmToken
+	if request.FCMToken != "" {
+		err = a.notificationRepo.DeleteFCMToken(ctx, request.UserID, request.FCMToken)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to delete FCM token")
+			return err
+		}
+	}
 
 	return nil
 }
